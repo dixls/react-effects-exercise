@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Card from "./Card";
-import DrawButton from "./DrawButton";
-import axios from "axios";
+import GetCardButton from "./GetCardButton";
 
 function DeckOfCards() {
     const newDeckUrl = "http://deckofcardsapi.com/api/deck/new/shuffle/";
@@ -22,8 +21,16 @@ function DeckOfCards() {
 
     useEffect(function drawACardOnButtonClick() {
         async function drawACard() {
-            const res = await axios.get(`http://deckofcardsapi.com/api/deck/${cards.deckId}/draw/`);
-            setCards({ cards: cards.deckId, drawnCards: [...cards.drawnCards, { ...res.data.cards }] })
+            if (cards.deckId) {
+                let res = await axios.get(`http://deckofcardsapi.com/api/deck/${cards.deckId}/draw/`);
+                if(res.data.success) {
+                    setCards({ deckId: cards.deckId, drawnCards: [...cards.drawnCards, { ...res.data.cards[0] }] })
+                }
+                else{
+                    alert("No more cards!")
+                    // http://deckofcardsapi.com/api/deck/<<deck_id>>/shuffle/
+                }
+            }
         }
         drawACard();
     }, [draw]);
@@ -34,8 +41,8 @@ function DeckOfCards() {
 
     return (
         <div>
-            <DrawButton drawACard={updateDraw} />
-            {cards.drawnCards.map((card, idx) => <Card key={idx} image={image} alt={[value, suit]} />)}
+            <GetCardButton drawACard={updateDraw} />
+            {cards.drawnCards.map((card, idx) => <Card key={idx} card={card} />)}
         </div>
     )
 }
