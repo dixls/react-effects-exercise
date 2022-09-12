@@ -1,0 +1,15 @@
+import React from "react";
+
+function DrawButton ({drawACard}) {
+
+    const clickHandler = e => {
+        e.preventDefault();
+        drawACard();
+    }
+    
+    return (
+        <Button onClick={clickHandler} >Draw a Card</Button>
+    )
+}
+
+export default DrawButton;
